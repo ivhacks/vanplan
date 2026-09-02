@@ -1,0 +1,145 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  color: #ece8e0;
+  font: 14px/1.3 ui-sans-serif, system-ui, sans-serif;
+  overflow: hidden;
+}
+
+html, body, .canvas {
+  background-color: #161618;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.10) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 100vw;
+  min-height: 100vh;
+  overflow: auto;
+  cursor: default;
+  user-select: none;
+}
+
+.file {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wires {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.wire {
+  fill: none;
+  stroke: #8a8580;
+  stroke-width: 1.7;
+  pointer-events: none;
+}
+
+.wire.temp {
+  stroke-dasharray: 5 4;
+  stroke: #b0aaa0;
+}
+
+.wire-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 10;
+  pointer-events: stroke;
+  cursor: pointer;
+}
+
+.node {
+  position: absolute;
+  z-index: 2;
+  width: 176px;
+  height: 52px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px 0 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.45), 0 6px 16px rgba(0,0,0,.18);
+}
+
+.node.selected {
+  outline: 1px solid rgba(255,255,255,.28);
+}
+
+.node input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: inherit;
+  font: inherit;
+  user-select: text;
+}
+
+.port {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #d4cfc4;
+  box-shadow: 0 0 0 2px rgba(22,22,24,.55);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+}
+
+.port.dep {
+  left: -6px;
+  cursor: crosshair;
+}
+
+.port.pre {
+  right: -6px;
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex: none;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.25);
+  cursor: pointer;
+}
+
+.x {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  opacity: 0;
+  cursor: pointer;
+  font: 12px/14px ui-sans-serif, system-ui, sans-serif;
+}
+
+.node:hover .x {
+  opacity: .55;
+}
+
+.x:hover {
+  opacity: 1 !important;
+}
