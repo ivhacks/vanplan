@@ -350,18 +350,17 @@ pub fn app() -> Html {
         let nodes = state.nodes.clone();
         let edges = state.edges.clone();
         use_effect_with((nodes, edges), move |(nodes, edges)| {
-            if nodes.is_empty()
+            let skip = nodes.is_empty()
                 && edges.is_empty()
                 && location_hash()
                     .trim()
                     .trim_start_matches('#')
-                    .is_empty()
-            {
-                return || {};
-            }
-            match model::to_yaml(nodes, edges).and_then(|y| hash::encode(&y)) {
-                Ok(payload) => replace_doc_hash(&payload),
-                Err(err) => console_error(&err),
+                    .is_empty();
+            if !skip {
+                match model::to_yaml(nodes, edges).and_then(|y| hash::encode(&y)) {
+                    Ok(payload) => replace_doc_hash(&payload),
+                    Err(err) => console_error(&err),
+                }
             }
             || {}
         });
@@ -417,13 +416,11 @@ pub fn app() -> Html {
     {
         let dispatcher = state.dispatcher();
         use_effect_with((), move |_| {
-            if !location_hash()
+            if location_hash()
                 .trim()
                 .trim_start_matches('#')
                 .is_empty()
             {
-                return || {};
-            }
             wasm_bindgen_futures::spawn_local(async move {
                 let Ok(resp_val) = JsFuture::from(window().fetch_with_str("seed.vanplan")).await
                 else {
@@ -449,6 +446,7 @@ pub fn app() -> Html {
                     Err(err) => console_error(&err),
                 }
             });
+            }
             || {}
         });
     }
