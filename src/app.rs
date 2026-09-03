@@ -33,6 +33,7 @@ struct State {
     nodes: Vec<Node>,
     edges: Vec<Edge>,
     pos: HashMap<String, (f64, f64)>,
+    measured: HashMap<String, (f64, f64)>,
     next_n: u32,
     selected: Option<String>,
     wiring: Option<Wiring>,
@@ -45,6 +46,7 @@ impl Default for State {
             nodes: Vec::new(),
             edges: Vec::new(),
             pos: HashMap::new(),
+            measured: HashMap::new(),
             next_n: 1,
             selected: None,
             wiring: None,
@@ -61,14 +63,17 @@ impl State {
             .iter()
             .map(|e| (e.from.clone(), e.to.clone()))
             .collect();
-        let mut sizes = std::collections::HashMap::new();
+        let mut sizes = HashMap::new();
         for n in &self.nodes {
-            sizes.insert(n.id.clone(), layout::card_size(&n.text));
+            sizes.insert(n.id.clone(), self.size_of(&n.id));
         }
         self.pos = layout::layout_sized(&ids, &edges, &sizes);
     }
 
     fn size_of(&self, id: &str) -> (f64, f64) {
+        if let Some(s) = self.measured.get(id) {
+            return *s;
+        }
         self.nodes
             .iter()
             .find(|n| n.id == id)
@@ -117,6 +122,11 @@ enum Msg {
         id: Option<String>,
     },
     Load(Document),
+    Measure {
+        id: String,
+        w: f64,
+        h: f64,
+    },
 }
 
 impl Reducible for State {
@@ -140,6 +150,7 @@ impl Reducible for State {
             Msg::SetText { id, text } => {
                 if let Some(i) = s.node_index(&id) {
                     s.nodes[i].text = text;
+                    s.measured.remove(&id);
                     s.relayout();
                 }
             }
@@ -179,6 +190,7 @@ impl Reducible for State {
                 s.relayout();
             }
             Msg::DeleteNode { id } => {
+                s.measured.remove(&id);
                 s.nodes.retain(|n| n.id != id);
                 s.edges.retain(|e| e.from != id && e.to != id);
                 if s.selected.as_deref() == Some(id.as_str()) {
@@ -198,7 +210,20 @@ impl Reducible for State {
                 s.selected = None;
                 s.wiring = None;
                 s.focus_id = None;
+                s.measured.clear();
                 s.relayout();
+            }
+            Msg::Measure { id, w, h } => {
+                let prev = s.measured.get(&id).copied();
+                let next = (w, h);
+                let dirty = match prev {
+                    Some((pw, ph)) => (pw - w).abs() > 0.5 || (ph - h).abs() > 0.5,
+                    None => true,
+                };
+                if dirty {
+                    s.measured.insert(id, next);
+                    s.relayout();
+                }
             }
         }
         Rc::new(s)
@@ -759,6 +784,7 @@ struct NodeCardProps {
 #[function_component(NodeCard)]
 fn node_card(props: &NodeCardProps) -> Html {
     let input_ref = use_node_ref();
+    let card_ref = use_node_ref();
     {
         let input_ref = input_ref.clone();
         let autofocus = props.autofocus;
@@ -767,6 +793,31 @@ fn node_card(props: &NodeCardProps) -> Html {
                 if let Some(el) = input_ref.cast::<web_sys::HtmlTextAreaElement>() {
                     let _ = el.focus();
                 }
+            }
+            || {}
+        });
+    }
+    {
+        let card_ref = card_ref.clone();
+        let input_ref = input_ref.clone();
+        let dispatcher = props.dispatcher.clone();
+        let id = props.node.id.clone();
+        let text = props.node.text.clone();
+        let est_w = props.w;
+        let est_h = props.h;
+        use_effect_with((text, est_w, est_h), move |_| {
+            if let Some(ta) = input_ref.cast::<web_sys::HtmlTextAreaElement>() {
+                let _ = ta.style().set_property("height", "auto");
+                let sh = ta.scroll_height();
+                let _ = ta.style().set_property("height", &format!("{sh}px"));
+            }
+            if let Some(el) = card_ref.cast::<HtmlElement>() {
+                let r = el.get_bounding_client_rect();
+                dispatcher.dispatch(Msg::Measure {
+                    id,
+                    w: r.width(),
+                    h: r.height(),
+                });
             }
             || {}
         });
@@ -850,8 +901,8 @@ fn node_card(props: &NodeCardProps) -> Html {
 
     let fg = model::text_color(&props.node.color);
     let style = format!(
-        "left:{:.0}px;top:{:.0}px;width:{:.0}px;height:{:.0}px;background:{};color:{};",
-        props.x, props.y, props.w, props.h, props.node.color, fg
+        "left:{:.0}px;top:{:.0}px;width:{:.0}px;background:{};color:{};",
+        props.x, props.y, props.w, props.node.color, fg
     );
     let class = match (props.selected, props.node.done) {
         (true, true) => "node selected done",
@@ -861,7 +912,7 @@ fn node_card(props: &NodeCardProps) -> Html {
     };
 
     html! {
-        <div class={class} style={style} data-id={props.node.id.clone()} onclick={on_select} ondblclick={on_dbl}>
+        <div ref={card_ref} class={class} style={style} data-id={props.node.id.clone()} onclick={on_select} ondblclick={on_dbl}>
             <div
                 class="port dep"
                 data-port="dep"
@@ -875,6 +926,7 @@ fn node_card(props: &NodeCardProps) -> Html {
                 ref={input_ref}
                 value={props.node.text.clone()}
                 rows={"1"}
+                spellcheck={"false"}
                 oninput={on_input}
             />
             <div
