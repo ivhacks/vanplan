@@ -57,7 +57,7 @@ nodes:
   color: '#c4b8a8'
   done: false
 - id: crt-frame
-  text: CRT wood: check fit, enlarge to open storage
+  text: "CRT wood: check fit, enlarge to open storage"
   color: '#c4b8a8'
   done: false
 - id: peel
