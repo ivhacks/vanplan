@@ -61,7 +61,19 @@ impl State {
             .iter()
             .map(|e| (e.from.clone(), e.to.clone()))
             .collect();
-        self.pos = layout::layout(&ids, &edges);
+        let mut sizes = std::collections::HashMap::new();
+        for n in &self.nodes {
+            sizes.insert(n.id.clone(), layout::card_size(&n.text));
+        }
+        self.pos = layout::layout_sized(&ids, &edges, &sizes);
+    }
+
+    fn size_of(&self, id: &str) -> (f64, f64) {
+        self.nodes
+            .iter()
+            .find(|n| n.id == id)
+            .map(|n| layout::card_size(&n.text))
+            .unwrap_or((NODE_W, NODE_H))
     }
 
     fn node_index(&self, id: &str) -> Option<usize> {
@@ -128,6 +140,7 @@ impl Reducible for State {
             Msg::SetText { id, text } => {
                 if let Some(i) = s.node_index(&id) {
                     s.nodes[i].text = text;
+                    s.relayout();
                 }
             }
             Msg::CycleColor { id } => {
@@ -618,15 +631,21 @@ pub fn app() -> Html {
     };
 
     let max_x = state
-        .pos
-        .values()
-        .map(|p| p.0 + NODE_W + layout::PAD)
+        .nodes
+        .iter()
+        .map(|n| {
+            let x = state.pos.get(&n.id).map(|p| p.0).unwrap_or(0.0);
+            x + layout::card_size(&n.text).0 + layout::PAD
+        })
         .fold(0.0, f64::max)
         .max(800.0);
     let max_y = state
-        .pos
-        .values()
-        .map(|p| p.1 + NODE_H + layout::PAD)
+        .nodes
+        .iter()
+        .map(|n| {
+            let y = state.pos.get(&n.id).map(|p| p.1).unwrap_or(0.0);
+            y + layout::card_size(&n.text).1 + layout::PAD
+        })
         .fold(0.0, f64::max)
         .max(600.0);
 
@@ -636,8 +655,10 @@ pub fn app() -> Html {
         .filter_map(|e| {
             let (dx, dy) = *state.pos.get(&e.to)?;
             let (px, py) = *state.pos.get(&e.from)?;
-            let (x1, y1) = layout::port_left(dx, dy);
-            let (x2, y2) = layout::port_right(px, py);
+            let (_dw, dh) = state.size_of(&e.to);
+            let (pw, ph) = state.size_of(&e.from);
+            let (x1, y1) = layout::port_left(dx, dy, dh);
+            let (x2, y2) = layout::port_right(px, py, pw, ph);
             let d = layout::wire_d(x1, y1, x2, y2);
             let from = e.from.clone();
             let to = e.to.clone();
@@ -661,9 +682,10 @@ pub fn app() -> Html {
 
     let temp_wire = state.wiring.as_ref().and_then(|w| {
         let (nx, ny) = *state.pos.get(&w.source)?;
+        let (nw, nh) = state.size_of(&w.source);
         let (x1, y1) = match w.dir {
-            WireDir::FromDep => layout::port_left(nx, ny),
-            WireDir::FromPre => layout::port_right(nx, ny),
+            WireDir::FromDep => layout::port_left(nx, ny, nh),
+            WireDir::FromPre => layout::port_right(nx, ny, nw, nh),
         };
         let d = layout::wire_d(x1, y1, w.x, w.y);
         Some(html! { <path class="wire temp" d={d} /> })
@@ -680,12 +702,15 @@ pub fn app() -> Html {
                 .unwrap_or((layout::PAD, layout::PAD));
             let selected = state.selected.as_deref() == Some(n.id.as_str());
             let autofocus = state.focus_id.as_deref() == Some(n.id.as_str());
+            let (nw, nh) = layout::card_size(&n.text);
             html! {
                 <NodeCard
                     key={n.id.clone()}
                     node={n.clone()}
                     x={x}
                     y={y}
+                    w={nw}
+                    h={nh}
                     selected={selected}
                     autofocus={autofocus}
                     dispatcher={state.dispatcher()}
@@ -723,6 +748,8 @@ struct NodeCardProps {
     node: Node,
     x: f64,
     y: f64,
+    w: f64,
+    h: f64,
     selected: bool,
     autofocus: bool,
     dispatcher: UseReducerDispatcher<State>,
@@ -737,7 +764,7 @@ fn node_card(props: &NodeCardProps) -> Html {
         let autofocus = props.autofocus;
         use_effect_with(autofocus, move |af| {
             if *af {
-                if let Some(el) = input_ref.cast::<HtmlInputElement>() {
+                if let Some(el) = input_ref.cast::<web_sys::HtmlTextAreaElement>() {
                     let _ = el.focus();
                 }
             }
@@ -750,7 +777,7 @@ fn node_card(props: &NodeCardProps) -> Html {
         let dispatcher = props.dispatcher.clone();
         let id = id.clone();
         Callback::from(move |e: InputEvent| {
-            let input: HtmlInputElement = e.target_unchecked_into();
+            let input: web_sys::HtmlTextAreaElement = e.target_unchecked_into();
             dispatcher.dispatch(Msg::SetText {
                 id: id.clone(),
                 text: input.value(),
@@ -823,8 +850,8 @@ fn node_card(props: &NodeCardProps) -> Html {
 
     let fg = model::text_color(&props.node.color);
     let style = format!(
-        "left:{:.0}px;top:{:.0}px;background:{};color:{};",
-        props.x, props.y, props.node.color, fg
+        "left:{:.0}px;top:{:.0}px;width:{:.0}px;height:{:.0}px;background:{};color:{};",
+        props.x, props.y, props.w, props.h, props.node.color, fg
     );
     let class = match (props.selected, props.node.done) {
         (true, true) => "node selected done",
@@ -844,10 +871,10 @@ fn node_card(props: &NodeCardProps) -> Html {
             <button type="button" class="check" tabindex="-1" onclick={on_toggle_done}>
                 { if props.node.done { "✓" } else { "" } }
             </button>
-            <input
+            <textarea
                 ref={input_ref}
-                type="text"
                 value={props.node.text.clone()}
+                rows={"1"}
                 oninput={on_input}
             />
             <div

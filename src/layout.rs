@@ -2,17 +2,96 @@ use std::collections::HashMap;
 
 pub const NODE_W: f64 = 176.0;
 pub const NODE_H: f64 = 52.0;
-pub const H_GAP: f64 = 260.0;
-pub const V_GAP: f64 = 80.0;
+pub const GAP_X: f64 = 84.0;
+pub const GAP_Y: f64 = 28.0;
+pub const H_GAP: f64 = NODE_W + GAP_X;
+pub const V_GAP: f64 = NODE_H + GAP_Y;
 pub const PAD: f64 = 56.0;
+
+const CHAR_W: f64 = 8.4;
+const LINE_H: f64 = 18.2;
+const CHROME_W: f64 = 68.0;
+const CHROME_H: f64 = 20.0;
+const ASPECT: f64 = 2.5;
+
+/// Width/height so the card stays a compact rectangle and still fits `text`.
+pub fn card_size(text: &str) -> (f64, f64) {
+    if text.is_empty() {
+        return (NODE_W, NODE_H);
+    }
+    let min_inner = (NODE_W - CHROME_W).max(80.0);
+    let n = text.chars().count() as f64;
+    let area = n * CHAR_W * LINE_H;
+    let unwrapped = (n * CHAR_W).max(min_inner);
+    let mut inner_w = (area * ASPECT).sqrt().max(min_inner).min(unwrapped);
+    inner_w = inner_w.max(min_inner);
+    let lines = wrap_line_count(text, inner_w) as f64;
+    let w = (inner_w + CHROME_W).max(NODE_W);
+    let h = (CHROME_H + lines * LINE_H).max(NODE_H);
+    (w, h)
+}
+
+fn wrap_line_count(text: &str, inner_w: f64) -> usize {
+    let max_chars = (inner_w / CHAR_W).floor().max(1.0) as usize;
+    let mut lines = 0usize;
+    for para in text.split('\n') {
+        if para.is_empty() {
+            lines += 1;
+            continue;
+        }
+        let mut col = 0usize;
+        lines += 1;
+        for word in para.split_inclusive(' ') {
+            let wlen = word.chars().count();
+            if col == 0 {
+                if wlen > max_chars {
+                    lines += (wlen - 1) / max_chars;
+                    col = wlen % max_chars;
+                    if col == 0 {
+                        col = max_chars;
+                    }
+                } else {
+                    col = wlen;
+                }
+            } else if col + wlen > max_chars {
+                lines += 1;
+                if wlen > max_chars {
+                    lines += (wlen - 1) / max_chars;
+                    col = wlen % max_chars;
+                    if col == 0 {
+                        col = max_chars;
+                    }
+                } else {
+                    col = wlen;
+                }
+            } else {
+                col += wlen;
+            }
+        }
+    }
+    lines.max(1)
+}
 
 /// Longest-path layering + a few barycentric sweeps.
 /// Isolated nodes sit in a leftover column to the left of the DAG.
 pub fn layout(ids: &[String], edges: &[(String, String)]) -> HashMap<String, (f64, f64)> {
+    let sizes: HashMap<String, (f64, f64)> = ids
+        .iter()
+        .map(|id| (id.clone(), (NODE_W, NODE_H)))
+        .collect();
+    layout_sized(ids, edges, &sizes)
+}
+
+pub fn layout_sized(
+    ids: &[String],
+    edges: &[(String, String)],
+    sizes: &HashMap<String, (f64, f64)>,
+) -> HashMap<String, (f64, f64)> {
     let mut pos: HashMap<String, (f64, f64)> = HashMap::new();
     if ids.is_empty() {
         return pos;
     }
+    let size_of = |id: &str| sizes.get(id).copied().unwrap_or((NODE_W, NODE_H));
 
     let mut preds: HashMap<&str, Vec<&str>> = HashMap::new();
     let mut succs: HashMap<&str, Vec<&str>> = HashMap::new();
@@ -77,17 +156,32 @@ pub fn layout(ids: &[String], edges: &[(String, String)]) -> HashMap<String, (f6
 
     barycentric(&mut by_layer, &preds, &succs);
 
-    let max_len = by_layer.values().map(|v| v.len()).max().unwrap_or(1);
     let mut layers: Vec<usize> = by_layer.keys().copied().collect();
     layers.sort();
+    let max_stack = by_layer
+        .values()
+        .map(|c| {
+            let h: f64 = c.iter().map(|id| size_of(id).1).sum();
+            h + GAP_Y * c.len().saturating_sub(1) as f64
+        })
+        .fold(0.0_f64, f64::max);
+    let mut x = PAD;
     for l in layers {
         let col = by_layer.get(&l).cloned().unwrap_or_default();
-        let extra = (max_len.saturating_sub(col.len())) as f64 * V_GAP / 2.0;
-        for (i, id) in col.iter().enumerate() {
-            let x = PAD + l as f64 * H_GAP;
-            let y = PAD + extra + i as f64 * V_GAP;
-            pos.insert((*id).to_string(), (x, y));
+        let col_w = col
+            .iter()
+            .map(|id| size_of(id).0)
+            .fold(NODE_W, f64::max);
+        let total_h: f64 = col.iter().map(|id| size_of(id).1).sum::<f64>()
+            + GAP_Y * col.len().saturating_sub(1) as f64;
+        let extra = (max_stack - total_h).max(0.0) / 2.0;
+        let mut y = PAD + extra;
+        for id in col {
+            let h = size_of(id).1;
+            pos.insert(id.to_string(), (x, y));
+            y += h + GAP_Y;
         }
+        x += col_w + GAP_X;
     }
     pos
 }
@@ -157,12 +251,12 @@ fn current_order<'a>(by_layer: &HashMap<usize, Vec<&'a str>>) -> HashMap<&'a str
     order
 }
 
-pub fn port_left(x: f64, y: f64) -> (f64, f64) {
-    (x, y + NODE_H / 2.0)
+pub fn port_left(x: f64, y: f64, h: f64) -> (f64, f64) {
+    (x, y + h / 2.0)
 }
 
-pub fn port_right(x: f64, y: f64) -> (f64, f64) {
-    (x + NODE_W, y + NODE_H / 2.0)
+pub fn port_right(x: f64, y: f64, w: f64, h: f64) -> (f64, f64) {
+    (x + w, y + h / 2.0)
 }
 
 /// Cubic from dependent's left port to prereq's right port.
@@ -221,5 +315,20 @@ mod tests {
         let pos = layout(&ids(&["z", "a", "m"]), &[]);
         let xs: Vec<f64> = pos.values().map(|p| p.0).collect();
         assert!(xs.iter().all(|x| (*x - xs[0]).abs() < 0.01));
+    }
+
+    #[test]
+    fn card_grows_with_text() {
+        let (w0, h0) = card_size("");
+        let (w1, h1) = card_size("CHMSL");
+        let (w2, h2) = card_size("CRT wood: check fit, enlarge to open storage");
+        let (w3, h3) = card_size(
+            "Figure A/C placement then route both tubes out a side-window corner opener",
+        );
+        assert_eq!((w0, h0), (NODE_W, NODE_H));
+        assert!(w1 >= NODE_W && h1 >= NODE_H);
+        assert!(w2 * h2 > w1 * h1);
+        assert!(w3 * h3 > w2 * h2);
+        assert!(w3 / h3 > 1.2 && w3 / h3 < 4.5, "stay roughly rectangular {}", w3 / h3);
     }
 }
