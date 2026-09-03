@@ -110,6 +110,7 @@ html, body, .canvas {
 
 .port.pre {
   right: -6px;
+  cursor: crosshair;
 }
 
 .swatch {
@@ -142,4 +143,38 @@ html, body, .canvas {
 
 .x:hover {
   opacity: 1 !important;
+}
+
+.node.done {
+  opacity: 0.58;
+}
+
+.node.done input {
+  text-decoration: line-through;
+}
+
+.check {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  box-sizing: border-box;
+  padding: 0;
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+  background: transparent;
+  color: inherit;
+  opacity: 0.55;
+  cursor: pointer;
+  font: 10px/13px ui-sans-serif, system-ui, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.node.done .check {
+  opacity: 0.9;
+}
+
+.check:hover {
+  opacity: 1;
 }

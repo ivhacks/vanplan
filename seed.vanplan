@@ -1,0 +1,315 @@
+vanplan: 1
+nodes:
+- id: chmsl-mount
+  text: CHMSL mounted (wood screws)
+  color: '#a8b4a8'
+  done: true
+- id: maple
+  text: Maple lumber (still in car)
+  color: '#a8b4a8'
+  done: true
+- id: tape-nuts
+  text: Electrical tape + wire nuts
+  color: '#a8b4a8'
+  done: true
+- id: shades-have
+  text: Rear accordion shades on hand
+  color: '#a8b4a8'
+  done: true
+- id: iac
+  text: PCM/IAC relearn after dead battery
+  color: '#a8b4a8'
+  done: true
+- id: hot-wire-id
+  text: Identified always-hot white wire
+  color: '#a8b4a8'
+  done: true
+- id: alt-pick
+  text: Remy 94615 + Gates K071005 picked
+  color: '#a8b4a8'
+  done: true
+- id: atc
+  text: 15A ATC fuses (not mini)
+  color: '#a8b4a8'
+  done: true
+- id: kilmat-main
+  text: Floor kilmat except footwell
+  color: '#a8b4a8'
+  done: true
+- id: lowes-screws
+  text: Buy CHMSL exterior screws at Lowe's
+  color: '#b0a090'
+  done: false
+- id: chmsl-wire
+  text: Wire CHMSL (tape/solder, tomorrow)
+  color: '#90a4a8'
+  done: false
+- id: chmsl-ss
+  text: Stainless CHMSL into fiberglass
+  color: '#90a4a8'
+  done: false
+- id: lumber-in
+  text: Bring maple in from the car
+  color: '#b0a090'
+  done: false
+- id: cardboard
+  text: Cardboard mocks of slat width
+  color: '#c4b8a8'
+  done: false
+- id: crt-frame
+  text: CRT wood: check fit, enlarge to open storage
+  color: '#c4b8a8'
+  done: false
+- id: peel
+  text: Peel old ceiling ply + insulation
+  color: '#c4b8a8'
+  done: false
+- id: veneer
+  text: Maple veneer on hightop sides
+  color: '#c4b8a8'
+  done: false
+- id: cab-headliner
+  text: Pull cab fabric/wood ceiling
+  color: '#c4b8a8'
+  done: false
+- id: pull-upper
+  text: Upper compartment wire bundle
+  color: '#90a4a8'
+  done: false
+- id: shelf
+  text: Maple high shelf into steel
+  color: '#c4b8a8'
+  done: false
+- id: speaker
+  text: Speaker mount above bed
+  color: '#c4b8a8'
+  done: false
+- id: rear-board
+  text: Rear top board
+  color: '#c4b8a8'
+  done: false
+- id: seatbelt-panel
+  text: Seat belt bolt off, pull driver-side wood
+  color: '#c4b8a8'
+  done: false
+- id: driver-wires
+  text: Yank driver-side wire bundle
+  color: '#90a4a8'
+  done: false
+- id: side-insul
+  text: Kilmat + wool on metal sides
+  color: '#b8a8b0'
+  done: false
+- id: vesa-plan
+  text: Plan VESA, furrings, and slats
+  color: '#b8a8b0'
+  done: false
+- id: furrings
+  text: Skinny furrings on vertical steel
+  color: '#c4b8a8'
+  done: false
+- id: walls
+  text: Side wall slats on furrings
+  color: '#b8a8b0'
+  done: false
+- id: ac-pos
+  text: Figure A/C placement
+  color: '#a8a090'
+  done: false
+- id: ac-window
+  text: Window-corner A/C pass-through, tubes spaced
+  color: '#a8a090'
+  done: false
+- id: ac-drain
+  text: A/C drain / hold the water
+  color: '#a8a090'
+  done: false
+- id: ac-in
+  text: A/C installed
+  color: '#a8a090'
+  done: false
+- id: desk
+  text: Sitting desk
+  color: '#b8a8b0'
+  done: false
+- id: sit
+  text: Sitting position
+  color: '#a8a090'
+  done: false
+- id: vesa
+  text: Rigid VESA + rubber washers
+  color: '#b8a8b0'
+  done: false
+- id: monitors
+  text: Two monitors, far back
+  color: '#b8a8b0'
+  done: false
+- id: driver-seat
+  text: Pull driver seat (once)
+  color: '#b8a8b0'
+  done: false
+- id: footwell-kilmat
+  text: Driver footwell kilmat
+  color: '#b8a8b0'
+  done: false
+- id: vinyl
+  text: Vinyl floor
+  color: '#b8a8b0'
+  done: false
+- id: floor-done
+  text: Floor finished
+  color: '#b8a8b0'
+  done: false
+- id: bed-frame
+  text: Bed frame in
+  color: '#c4b8a8'
+  done: false
+- id: bed-setup
+  text: Make the bed
+  color: '#c4b8a8'
+  done: false
+- id: battery-in
+  text: House battery in
+  color: '#90a4a8'
+  done: false
+- id: toilet
+  text: Toilet in
+  color: '#a8a090'
+  done: false
+- id: shades-rear
+  text: Install rear accordion shades
+  color: '#a8b0b8'
+  done: false
+- id: shades-side
+  text: Install side accordion shades
+  color: '#a8b0b8'
+  done: false
+- id: curtain
+  text: Cab/living curtain
+  color: '#a8b0b8'
+  done: false
+- id: sd
+  text: San Diego Sep 18
+  color: '#a8a090'
+  done: false
+- id: sleep
+  text: Sleep in the van (Sep 8)
+  color: '#c4b8a8'
+  done: false
+- id: kill-light
+  text: Kill conversion ceiling light
+  color: '#90a4a8'
+  done: false
+- id: charge-batt
+  text: Real battery charge, not a jump
+  color: '#90a4a8'
+  done: false
+- id: spin-ac
+  text: Spin A/C pulley by hand
+  color: '#90a4a8'
+  done: false
+- id: order-alt
+  text: Order Remy 94615
+  color: '#b0a090'
+  done: false
+- id: order-belt
+  text: Order Gates K071005 belt
+  color: '#b0a090'
+  done: false
+- id: alt-swap
+  text: Swap van alternator + belt
+  color: '#90a4a8'
+  done: false
+- id: filler-parts
+  text: Filler + NSS parts arrive
+  color: '#b0a090'
+  done: false
+- id: steves
+  text: Drop filler/NSS at Steve's
+  color: '#b0a090'
+  done: false
+- id: filler
+  text: Replace fuel filler
+  color: '#90a4a8'
+  done: false
+- id: nss
+  text: Park/neutral switch (reverse lights)
+  color: '#90a4a8'
+  done: false
+- id: spray
+  text: Pinnacle 16oz spray bottles
+  color: '#b0a090'
+  done: false
+- id: hvac
+  text: Recover refrigerant, delete rear HVAC
+  color: '#a8a090'
+  done: false
+edges:
+- {from: chmsl-mount, to: chmsl-wire}
+- {from: tape-nuts, to: chmsl-wire}
+- {from: chmsl-mount, to: chmsl-ss}
+- {from: lowes-screws, to: chmsl-ss}
+- {from: maple, to: lumber-in}
+- {from: lumber-in, to: cardboard}
+- {from: cardboard, to: vesa-plan}
+- {from: cardboard, to: furrings}
+- {from: crt-frame, to: veneer}
+- {from: peel, to: side-insul}
+- {from: peel, to: walls}
+- {from: cab-headliner, to: pull-upper}
+- {from: pull-upper, to: shelf}
+- {from: veneer, to: shelf}
+- {from: lumber-in, to: shelf}
+- {from: lowes-screws, to: shelf}
+- {from: shelf, to: speaker}
+- {from: shelf, to: rear-board}
+- {from: speaker, to: bed-frame}
+- {from: rear-board, to: bed-frame}
+- {from: bed-frame, to: bed-setup}
+- {from: bed-setup, to: sleep}
+- {from: seatbelt-panel, to: driver-wires}
+- {from: seatbelt-panel, to: walls}
+- {from: side-insul, to: walls}
+- {from: ac-pos, to: ac-window}
+- {from: ac-pos, to: ac-drain}
+- {from: ac-pos, to: desk}
+- {from: ac-pos, to: sit}
+- {from: sit, to: vesa-plan}
+- {from: vesa-plan, to: furrings}
+- {from: vesa-plan, to: walls}
+- {from: furrings, to: walls}
+- {from: furrings, to: vesa}
+- {from: lumber-in, to: walls}
+- {from: ac-window, to: ac-in}
+- {from: ac-drain, to: ac-in}
+- {from: desk, to: monitors}
+- {from: vesa, to: monitors}
+- {from: walls, to: driver-seat}
+- {from: desk, to: driver-seat}
+- {from: driver-seat, to: vinyl}
+- {from: driver-seat, to: footwell-kilmat}
+- {from: kilmat-main, to: floor-done}
+- {from: vinyl, to: floor-done}
+- {from: footwell-kilmat, to: floor-done}
+- {from: kill-light, to: charge-batt}
+- {from: charge-batt, to: alt-swap}
+- {from: alt-pick, to: order-alt}
+- {from: alt-pick, to: order-belt}
+- {from: order-alt, to: alt-swap}
+- {from: order-belt, to: alt-swap}
+- {from: spin-ac, to: alt-swap}
+- {from: filler-parts, to: steves}
+- {from: steves, to: filler}
+- {from: steves, to: nss}
+- {from: bed-setup, to: sd}
+- {from: ac-in, to: sd}
+- {from: battery-in, to: sd}
+- {from: toilet, to: sd}
+- {from: walls, to: sd}
+- {from: floor-done, to: sd}
+- {from: shades-rear, to: sd}
+- {from: shades-side, to: sd}
+- {from: curtain, to: sd}
+- {from: filler, to: sd}
+- {from: nss, to: sd}
+- {from: alt-swap, to: sd}
