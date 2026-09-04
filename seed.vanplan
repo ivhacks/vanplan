@@ -5,7 +5,7 @@ nodes:
   color: '#a8b4a8'
   done: true
 - id: maple
-  text: Maple lumber (still in car)
+  text: Maple lumber bought
   color: '#a8b4a8'
   done: true
 - id: tape-nuts
@@ -36,25 +36,41 @@ nodes:
   text: Floor kilmat except footwell
   color: '#a8b4a8'
   done: true
-- id: lowes-screws
-  text: Buy CHMSL exterior screws at Lowe's
-  color: '#b0a090'
-  done: false
 - id: chmsl-wire
-  text: Wire CHMSL (tape/solder, tomorrow)
+  text: Wire CHMSL (solder + tape)
   color: '#90a4a8'
+  done: true
+- id: pull-upper
+  text: Upper compartment wire bundle
+  color: '#90a4a8'
+  done: true
+- id: order-alt
+  text: Order Remy 94615 (arrives Tue)
+  color: '#b0a090'
+  done: true
+- id: order-belt
+  text: Order Gates K071005 belt
+  color: '#b0a090'
+  done: true
+- id: lowes-screws
+  text: "Buy #10 stainless + fender washers"
+  color: '#b0a090'
   done: false
 - id: chmsl-ss
   text: Stainless CHMSL into fiberglass
   color: '#90a4a8'
   done: false
 - id: lumber-in
-  text: Bring maple in from the car
+  text: Move maple from car into apartment
   color: '#b0a090'
   done: false
 - id: cardboard
   text: Cardboard mocks of slat width
   color: '#c4b8a8'
+  done: false
+- id: measure-74
+  text: "Measure metal-to-metal (74in bed gap min)"
+  color: '#b8a8b0'
   done: false
 - id: crt-frame
   text: "CRT wood: check fit, enlarge to open storage"
@@ -71,10 +87,6 @@ nodes:
 - id: cab-headliner
   text: Pull cab fabric/wood ceiling
   color: '#c4b8a8'
-  done: false
-- id: pull-upper
-  text: Upper compartment wire bundle
-  color: '#90a4a8'
   done: false
 - id: shelf
   text: Maple high shelf into steel
@@ -96,8 +108,12 @@ nodes:
   text: Yank driver-side wire bundle
   color: '#90a4a8'
   done: false
-- id: side-insul
-  text: Kilmat + wool on metal sides
+- id: side-kilmat
+  text: Kilmat on metal side walls
+  color: '#b8a8b0'
+  done: false
+- id: side-wool
+  text: Wool glued to Kilmat face
   color: '#b8a8b0'
   done: false
 - id: vesa-plan
@@ -133,7 +149,7 @@ nodes:
   color: '#b8a8b0'
   done: false
 - id: sit
-  text: Sitting position
+  text: Sitting position (28-30in)
   color: '#a8a090'
   done: false
 - id: vesa
@@ -208,16 +224,8 @@ nodes:
   text: Spin A/C pulley by hand
   color: '#90a4a8'
   done: false
-- id: order-alt
-  text: Order Remy 94615
-  color: '#b0a090'
-  done: false
-- id: order-belt
-  text: Order Gates K071005 belt
-  color: '#b0a090'
-  done: false
 - id: alt-swap
-  text: Swap van alternator + belt
+  text: Swap van alternator + belt (Tue+)
   color: '#90a4a8'
   done: false
 - id: filler-parts
@@ -225,7 +233,7 @@ nodes:
   color: '#b0a090'
   done: false
 - id: steves
-  text: Drop filler/NSS at Steve's
+  text: "Drop filler/NSS at Steve's"
   color: '#b0a090'
   done: false
 - id: filler
@@ -244,6 +252,10 @@ nodes:
   text: Recover refrigerant, delete rear HVAC
   color: '#a8a090'
   done: false
+- id: anaheim
+  text: Anaheim PYP 97 B2500 pull
+  color: '#b0a090'
+  done: false
 edges:
 - {from: chmsl-mount, to: chmsl-wire}
 - {from: tape-nuts, to: chmsl-wire}
@@ -251,15 +263,20 @@ edges:
 - {from: lowes-screws, to: chmsl-ss}
 - {from: maple, to: lumber-in}
 - {from: lumber-in, to: cardboard}
+- {from: lumber-in, to: shelf}
+- {from: lumber-in, to: anaheim}
 - {from: cardboard, to: vesa-plan}
 - {from: cardboard, to: furrings}
+- {from: measure-74, to: furrings}
+- {from: measure-74, to: walls}
 - {from: crt-frame, to: veneer}
-- {from: peel, to: side-insul}
+- {from: peel, to: side-kilmat}
 - {from: peel, to: walls}
+- {from: side-kilmat, to: side-wool}
+- {from: side-wool, to: walls}
 - {from: cab-headliner, to: pull-upper}
 - {from: pull-upper, to: shelf}
 - {from: veneer, to: shelf}
-- {from: lumber-in, to: shelf}
 - {from: lowes-screws, to: shelf}
 - {from: shelf, to: speaker}
 - {from: shelf, to: rear-board}
@@ -269,7 +286,6 @@ edges:
 - {from: bed-setup, to: sleep}
 - {from: seatbelt-panel, to: driver-wires}
 - {from: seatbelt-panel, to: walls}
-- {from: side-insul, to: walls}
 - {from: ac-pos, to: ac-window}
 - {from: ac-pos, to: ac-drain}
 - {from: ac-pos, to: desk}
