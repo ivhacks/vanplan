@@ -62,8 +62,8 @@ nodes:
   done: false
 - id: lumber-in
   text: Move maple from car into apartment
-  color: '#b0a090'
-  done: false
+  color: '#a8b4a8'
+  done: true
 - id: cardboard
   text: Cardboard mocks of slat width
   color: '#c4b8a8'
