@@ -153,7 +153,7 @@ nodes:
   color: '#a8a090'
   done: false
 - id: vesa
-  text: Rigid VESA + rubber washers
+  text: "Flush wall VESA / drop-in (no arms)"
   color: '#b8a8b0'
   done: false
 - id: monitors
