@@ -225,15 +225,19 @@ nodes:
   color: '#90a4a8'
   done: false
 - id: alt-swap
-  text: Swap van alternator + belt (Tue+)
+  text: "Steve installs Remy + belt (Wed)"
   color: '#90a4a8'
   done: false
-- id: filler-parts
-  text: Filler + NSS parts arrive
+- id: filler-have
+  text: Fuel filler on hand
+  color: '#a8b4a8'
+  done: true
+- id: nss-arrive
+  text: NSS / reverse switch arrives (Tue)
   color: '#b0a090'
   done: false
 - id: steves
-  text: "Drop filler/NSS at Steve's"
+  text: "Steve Wed AM: filler, NSS, alt"
   color: '#b0a090'
   done: false
 - id: filler
@@ -314,7 +318,11 @@ edges:
 - {from: order-alt, to: alt-swap}
 - {from: order-belt, to: alt-swap}
 - {from: spin-ac, to: alt-swap}
-- {from: filler-parts, to: steves}
+- {from: filler-have, to: steves}
+- {from: nss-arrive, to: steves}
+- {from: order-alt, to: steves}
+- {from: order-belt, to: steves}
+- {from: steves, to: alt-swap}
 - {from: steves, to: filler}
 - {from: steves, to: nss}
 - {from: bed-setup, to: sd}
