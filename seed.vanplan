@@ -256,10 +256,26 @@ nodes:
   text: Recover refrigerant, delete rear HVAC
   color: '#a8a090'
   done: false
+- id: seats-in
+  text: Donor seats pulled (immaculate)
+  color: '#a8b4a8'
+  done: true
+- id: pass-belt
+  text: Passenger seat belt pulled
+  color: '#a8b4a8'
+  done: true
+- id: spare-wheel
+  text: Matching spare wheel pulled
+  color: '#a8b4a8'
+  done: true
+- id: fuse-stash
+  text: ATC fuse stash from donor
+  color: '#a8b4a8'
+  done: true
 - id: anaheim
-  text: Anaheim PYP 97 B2500 pull
-  color: '#b0a090'
-  done: false
+  text: "Anaheim PYP: seats, belt, panels, wheel, fuses"
+  color: '#a8b4a8'
+  done: true
 edges:
 - {from: chmsl-mount, to: chmsl-wire}
 - {from: tape-nuts, to: chmsl-wire}
